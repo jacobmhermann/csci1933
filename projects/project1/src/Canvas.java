@@ -11,11 +11,21 @@ public class Canvas {
 
     public static void main(String[] args) {
         Canvas canvas = new Canvas();
-        Color col = Color.BLUE;
+        Color col = Color.RED;
+        Circle cir1 = new Circle(400,400,50);
+        cir1.setColor(col);
+        canvas.drawShape(cir1);
+        System.out.println(0);
+        col = Color.BLUE;
         Triangle tri1 = new Triangle(400,400,50,100);
         tri1.setColor(col);
         canvas.drawShape(tri1);
         System.out.println(1);
+        col = Color.YELLOW;
+        Rectangle rect1 = new Rectangle(400,400,50,100);
+        rect1.setColor(col);
+        canvas.drawShape(rect1);
+        System.out.println(2);
     }
 
     private int height;
@@ -47,7 +57,7 @@ public class Canvas {
         height = h;
         width = w;
         f.setSize(width, height);
-        f.getContentPane(); //.add(this);
+        f.getContentPane().add(this);
         circles = new LinkedList<Circle>();
         rectangles = new LinkedList<Rectangle>();
         triangles = new LinkedList<Triangle>();
@@ -88,13 +98,13 @@ public class Canvas {
     }
 
 
-    public synchronized void drawShape(Circle circ){ circles.add(circ); }
+    public synchronized void drawShape(Circle circ) { circles.add(circ); }
 
-    public synchronized void drawShape(Rectangle rec){ rectangles.add(rec); }
+    public synchronized void drawShape(Rectangle rec) { rectangles.add(rec); }
 
-    public synchronized void drawShape(Triangle tri){ triangles.add(tri); }
+    public synchronized void drawShape(Triangle tri) { triangles.add(tri); }
 
-    public synchronized void clear(){
+    public synchronized void clear() {
         circles.clear();
         rectangles.clear();
         triangles.clear();
