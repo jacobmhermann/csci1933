@@ -25,7 +25,7 @@ public class BallScreenSaver extends AnimationFrame {
         for (int i = 0; i < numBalls; i++) {
             initiateBall(ballSize,speed,border,i);
         }
-        setFPS(25);
+        setFPS(35);
         collisionLogger = new CollisionLogger(this.getWidth(), this.getHeight(), loggerBucketWidth);
     }
 
@@ -39,7 +39,7 @@ public class BallScreenSaver extends AnimationFrame {
         // creates a red ball
         ballArray[0].setColor(Color.RED);
 
-        setFPS(25);
+        setFPS(35);
         collisionLogger = new CollisionLogger(this.getWidth(), this.getHeight(), loggerBucketWidth);
     }
 
@@ -150,8 +150,8 @@ public class BallScreenSaver extends AnimationFrame {
                 ballArray[i].setSpeedX(ballArray[i].getSpeedX() * .9);
                 ballArray[i].setSpeedY(ballArray[i].getSpeedY() * .9);
             }
-            //int newFPS = getFPS() * .9 ;
-            //setFPS(newFPS/1);
+            int newFPS = (int) (getFPS()*.9);
+            setFPS(newFPS);
         }
 
         else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_RIGHT) {
@@ -160,6 +160,8 @@ public class BallScreenSaver extends AnimationFrame {
                 ballArray[i].setSpeedX(ballArray[i].getSpeedX() * 1.1);
                 ballArray[i].setSpeedY(ballArray[i].getSpeedY() * 1.1);
             }
+            int newFPS = (int) (getFPS()*1.1);
+            setFPS(newFPS);
         }
     }
 
