@@ -150,8 +150,8 @@ public class BallScreenSaver extends AnimationFrame {
                 ballArray[i].setSpeedX(ballArray[i].getSpeedX() * .9);
                 ballArray[i].setSpeedY(ballArray[i].getSpeedY() * .9);
             }
-            int newFPS = getFPS() * .9 ;
-            setFPS(newFPS/1);
+            //int newFPS = getFPS() * .9 ;
+            //setFPS(newFPS/1);
         }
 
         else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_RIGHT) {

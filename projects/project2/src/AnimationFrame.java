@@ -67,11 +67,6 @@ public abstract class AnimationFrame extends Frame implements Runnable {
 			fps=newFPS;
 	}
 
-	public void setFPS(double newFPS){
-		if (newFPS!=0)//to prevent div by 0 errors.
-			fps=Long.intValue(Math.round(newFPS));
-	}
-
 
 	/** 
 	 *	This method is invoked whenever the animation frame receives a keyboard event.
