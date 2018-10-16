@@ -27,7 +27,11 @@ public class BallScreenSaver extends AnimationFrame {
         for (int i = 0; i < numBalls; i++) {
             initiateBall(ballSize,speed,border,i);
         }
+<<<<<<< HEAD
         setFPS(30);
+=======
+        setFPS(35);
+>>>>>>> f9dbc3a2ca533b0f69a641aa8370cd83f2901ad4
         collisionLogger = new CollisionLogger(this.getWidth(), this.getHeight(), loggerBucketWidth);
     }
 
@@ -41,7 +45,11 @@ public class BallScreenSaver extends AnimationFrame {
         // creates a red ball
         ballArray[0].setColor(Color.RED);
 
+<<<<<<< HEAD
         setFPS(30);
+=======
+        setFPS(35);
+>>>>>>> f9dbc3a2ca533b0f69a641aa8370cd83f2901ad4
         collisionLogger = new CollisionLogger(this.getWidth(), this.getHeight(), loggerBucketWidth);
     }
 
@@ -156,6 +164,11 @@ public class BallScreenSaver extends AnimationFrame {
                 ballArray[i].setSpeedX(ballArray[i].getSpeedX() * .9);
                 ballArray[i].setSpeedY(ballArray[i].getSpeedY() * .9);
             }
+<<<<<<< HEAD
+=======
+            int newFPS = (int) (getFPS()*.9);
+            setFPS(newFPS);
+>>>>>>> f9dbc3a2ca533b0f69a641aa8370cd83f2901ad4
         }
 
         else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_RIGHT) {
@@ -164,6 +177,8 @@ public class BallScreenSaver extends AnimationFrame {
                 ballArray[i].setSpeedX(ballArray[i].getSpeedX() * 1.1);
                 ballArray[i].setSpeedY(ballArray[i].getSpeedY() * 1.1);
             }
+            int newFPS = (int) (getFPS()*1.1);
+            setFPS(newFPS);
         }
 
         else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_SPACE) {
