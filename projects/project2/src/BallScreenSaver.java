@@ -17,6 +17,8 @@ public class BallScreenSaver extends AnimationFrame {
     private CollisionLogger collisionLogger;
     private static final int loggerBucketWidth = 25;
     private int saveCounter = 0;
+    private int collisionCount = 0;
+    Collision lastCollision;
 
     public BallScreenSaver() {
         super();
@@ -25,7 +27,7 @@ public class BallScreenSaver extends AnimationFrame {
         for (int i = 0; i < numBalls; i++) {
             initiateBall(ballSize,speed,border,i);
         }
-        setFPS(25);
+        setFPS(30);
         collisionLogger = new CollisionLogger(this.getWidth(), this.getHeight(), loggerBucketWidth);
     }
 
@@ -39,7 +41,7 @@ public class BallScreenSaver extends AnimationFrame {
         // creates a red ball
         ballArray[0].setColor(Color.RED);
 
-        setFPS(25);
+        setFPS(30);
         collisionLogger = new CollisionLogger(this.getWidth(), this.getHeight(), loggerBucketWidth);
     }
 
@@ -80,7 +82,10 @@ public class BallScreenSaver extends AnimationFrame {
             for (int j = 0; j < Array.getLength(ballArray); j++) {
                 Ball otherBall = ballArray[j];
                 if (ball.intersect(otherBall) && i != j) {
+                    lastCollision = new Collision(ball, otherBall);
                     ball.collide(otherBall);
+                    lastCollision.updateFinalValues(ball,otherBall);
+                    collisionCount += 1;
                     collisionLogger.collide(ball,otherBall);
                 }
             }
@@ -103,6 +108,7 @@ public class BallScreenSaver extends AnimationFrame {
 
     public void initiateBall(int ballSize, int speed, int border, int i) {
         // formats the ball objects
+        
         double xPos = randDouble(border,getWidth()-border);
         double yPos = randDouble(border,getHeight()-border);
         Color color = Color.GREEN;
@@ -134,7 +140,7 @@ public class BallScreenSaver extends AnimationFrame {
         int keyCode = e.getKeyCode();
 
         if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_P) {
-            EasyBufferedImage image = EasyBufferedImage.createImage(collisionLogger.getNormalizedHeatMap());
+            EasyBufferedImage image = EasyBufferedImage.createImage(collisionLogger.getResizedHeatMap());
             try {
                 image.save("heatmap"+saveCounter+".png", EasyBufferedImage.PNG);
                 saveCounter++;
@@ -150,8 +156,6 @@ public class BallScreenSaver extends AnimationFrame {
                 ballArray[i].setSpeedX(ballArray[i].getSpeedX() * .9);
                 ballArray[i].setSpeedY(ballArray[i].getSpeedY() * .9);
             }
-            //int newFPS = getFPS() * .9 ;
-            //setFPS(newFPS/1);
         }
 
         else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_RIGHT) {
@@ -161,6 +165,18 @@ public class BallScreenSaver extends AnimationFrame {
                 ballArray[i].setSpeedY(ballArray[i].getSpeedY() * 1.1);
             }
         }
-    }
 
+        else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_SPACE) {
+            System.out.println("KE and P before and after collision "+ collisionCount+ " (System = two balls involved in collision).");
+            System.out.println("KE of system before collision = " + lastCollision.getKi());
+            System.out.print("P of system before collision = ");
+            lastCollision.printPi();
+            System.out.println();
+            System.out.println("KE of system after collision = " + lastCollision.getKf());
+            System.out.print("P of system after collision = ");
+            lastCollision.printPf();
+            System.out.println();
+            System.out.println();
+        }
+    }
 }
