@@ -38,12 +38,13 @@ import java.util.*;
 public class SparseIntMatrix {
 
     private int ROWS, COLUMNS;
-    private MatrixEntry[] firstInColumn;
+    private MatrixEntry[] firstInColumn,firstInRow;
 
     public SparseIntMatrix(int rows, int cols) {
         ROWS = rows;
         COLUMNS = cols;
         firstInColumn = new MatrixEntry[COLUMNS];
+        firstInRow = new MatrixEntry[ROWS];
     } // end constructor
 
     public SparseIntMatrix(int rows, int cols, String inputFile) {
@@ -68,8 +69,19 @@ public class SparseIntMatrix {
     } // end getElement
 
     public boolean setElement(int row, int col, int data) {
+        boolean successCol, successRow;
+        successCol = setColumnElement(row, col, data);
+        successRow = setRowElement(row, col, data);
+        if (successCol && successRow) {
+            return true;
+        } else {
+            return false;
+        }
+    } // end setElement
+
+    public boolean setColumnElement(int row, int col, int data) {
         boolean hasNext;
-        MatrixEntry newEntry = new MatrixEntry(row,col,data);
+        MatrixEntry newEntry = new MatrixEntry(row, col, data);
         MatrixEntry entry = firstInColumn[col];
         MatrixEntry last = null;
 
@@ -108,7 +120,50 @@ public class SparseIntMatrix {
             }
             return true;
         } // end if/else
-    } // end setElement
+    } // end setColumnElement
+
+    public boolean setRowElement(int row, int col, int data) {
+        boolean hasNext;
+        MatrixEntry newEntry = new MatrixEntry(row, col, data);
+        MatrixEntry entry = firstInRow[row];
+        MatrixEntry last = null;
+
+        if (row >= ROWS && col >= COLUMNS) {
+            return false;
+        } else if (entry == null) {
+            firstInRow[row] = newEntry;
+            return true;
+        } else {
+            try {
+                entry.getNextCol();
+                hasNext = true;
+            } catch (NullPointerException e) {
+                hasNext = false;
+            }
+            while (hasNext && entry.getColumn() <= col) {
+                if (entry.getColumn() == col) {
+                    entry.setData(data);
+                    return true;
+                } else {
+                    last = entry;
+                    entry = entry.getNextCol();
+                    try {
+                        entry.getNextCol();
+                    } catch (NullPointerException e) {
+                        hasNext = false;
+                    }
+                }
+            } // end while
+
+            if (hasNext) {
+                last.setNextCol(newEntry);
+                newEntry.setNextCol(entry);
+            } else {
+                last.setNextCol(newEntry);
+            }
+            return true;
+        } // end if/else
+    } // end setRowElement
 
     public boolean removeElement(int row, int col, int data) {
         boolean success = false;
@@ -139,43 +194,49 @@ public class SparseIntMatrix {
         if (this.ROWS == otherMat.getNumRows() && this.COLUMNS == otherMat.getNumCols()) {
             SparseIntMatrix newMat = new SparseIntMatrix(ROWS, COLUMNS);
 
-            for (int i=0; i<ROWS; i++) {
-                for (int j=0; j<COLUMNS; j++) {
-                    int newData = this.getElement(i,j) + otherMat.getElement(i,j);
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLUMNS; j++) {
+                    int newData = this.getElement(i, j) + otherMat.getElement(i, j);
                     if (newData != 0) {
-                        newMat.setElement(i,j,newData);
+                        newMat.setElement(i, j, newData);
                     }
                 }
             }
             this.firstInColumn = newMat.firstInColumn;
             return true;
+        } else {
+            return false;
         }
-        else { return false; }
     } // end plus
 
     public boolean minus(SparseIntMatrix otherMat) {
         if (this.ROWS == otherMat.getNumRows() && this.COLUMNS == otherMat.getNumCols()) {
             SparseIntMatrix newMat = new SparseIntMatrix(ROWS, COLUMNS);
 
-            for (int i=0; i<ROWS; i++) {
-                for (int j=0; j<COLUMNS; j++) {
-                    int newData = this.getElement(i,j) - otherMat.getElement(i,j);
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLUMNS; j++) {
+                    int newData = this.getElement(i, j) - otherMat.getElement(i, j);
                     if (newData != 0) {
-                        newMat.setElement(i,j,newData);
+                        newMat.setElement(i, j, newData);
                     }
                 }
             }
             this.firstInColumn = newMat.firstInColumn;
             return true;
+        } else {
+            return false;
         }
-        else { return false; }
     } // end minus
 
 
     // accessor methods
-    public int getNumRows() { return ROWS; }
+    public int getNumRows() {
+        return ROWS;
+    }
 
-    public int getNumCols() { return COLUMNS; }
+    public int getNumCols() {
+        return COLUMNS;
+    }
 
 
     // helper methods
@@ -184,7 +245,7 @@ public class SparseIntMatrix {
 
         try {
             Scanner fileScan = new Scanner(file);
-            MatrixEntry[] matrixEntries = new MatrixEntry[ROWS*COLUMNS];
+            MatrixEntry[] matrixEntries = new MatrixEntry[ROWS * COLUMNS];
             int counter = 0;
 
             while (fileScan.hasNextLine()) {
@@ -196,13 +257,13 @@ public class SparseIntMatrix {
                 int data = Integer.parseInt(lineScan.next());
 
                 if (row <= ROWS && col <= COLUMNS && data != 0) {
-                    MatrixEntry entry = new MatrixEntry(row,col,data);
+                    MatrixEntry entry = new MatrixEntry(row, col, data);
                     matrixEntries[counter] = entry;
                     counter++;
                 }
             } // end while
 
-            MatrixEntry[] out = Arrays.copyOf(matrixEntries,getLength(matrixEntries));
+            MatrixEntry[] out = Arrays.copyOf(matrixEntries, getLength(matrixEntries));
             return out;
         } // end try
 
@@ -215,10 +276,10 @@ public class SparseIntMatrix {
 
     private void arrayToLinkedList(MatrixEntry[] matrixEntries) {
 
-        for (int col=0; col<COLUMNS; col++) {
+        for (int col = 0; col < COLUMNS; col++) {
             boolean first = true;
             MatrixEntry prevEntry = null;
-            for (MatrixEntry entry: matrixEntries) {
+            for (MatrixEntry entry : matrixEntries) {
                 if (entry.getColumn() == col) {
                     if (first) {
                         firstInColumn[col] = entry;
@@ -230,13 +291,29 @@ public class SparseIntMatrix {
                     }
                 }
             }
-        }
+        } // end for (columns)
 
+        for (int row = 0; row < ROWS; row++) {
+            boolean first = true;
+            MatrixEntry prevEntry = null;
+            for (MatrixEntry entry : matrixEntries) {
+                if (entry.getRow() == row) {
+                    if (first) {
+                        firstInRow[row] = entry;
+                        prevEntry = entry;
+                        first = false;
+                    } else {
+                        prevEntry.setNextCol(entry);
+                        prevEntry = entry;
+                    }
+                }
+            }
+        } // end for (rows)
     } // end arrayToLinkedList
 
     private int getLength(Object[] array) {
         int count = 0;
-        for (int i=0; i<array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             if (array[i] != null) {
                 count++;
             }
@@ -246,11 +323,14 @@ public class SparseIntMatrix {
 
 
     public static void main(String[] args) {
-        SparseIntMatrix mat1 = new SparseIntMatrix(800,800,"matrix2_data.txt");
-        SparseIntMatrix mat2 = new SparseIntMatrix(800,800,"matrix2_noise.txt");
-        boolean success = mat1.minus(mat2);
+        SparseIntMatrix mat1 = new SparseIntMatrix(800, 800, "matrix1_data.txt");
+        MatrixViewer.show(mat1);
+        SparseIntMatrix mat2 = new SparseIntMatrix(800, 800, "matrix2_data.txt");
+        MatrixViewer.show(mat2);
+        SparseIntMatrix mat3 = new SparseIntMatrix(800, 800, "matrix2_noise.txt");
+        boolean success = mat2.minus(mat3);
         if (success) {
-            MatrixViewer.show(mat1);
+            MatrixViewer.show(mat2);
         }
     }
 }

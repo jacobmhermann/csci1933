@@ -12,7 +12,6 @@ import static org.junit.Assert.*;
  * Note that testing all test cases in this file does not indicate a fully functional
  * SparseIntMatrix class.
  */
-
 public class TestSparseIntMatrix {
 
     @Rule
