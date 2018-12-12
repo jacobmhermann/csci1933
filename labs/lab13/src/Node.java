@@ -15,8 +15,9 @@ public class Node<K extends Comparable<K>, V> {
         this.right = right;
     }
 
-    public boolean equals(Node<K, V> other) {
-        if (other == null) return false;
+    public boolean equals(Node<K,V> other) {
+        if (other == null) { return false; }
+
         boolean left, right;
         if (this.left == null) {
             left = other.left == null;
